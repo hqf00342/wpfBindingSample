@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="wpfRectangleBindingTest.MyDataGrid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <DataGrid Name="datagrid"
+              ItemsSource="{Binding RectInfoCollection}"
+              SelectedItem="{Binding SelectedItem}"
+              Background="White"
+              Padding="5"
+              HeadersVisibility="Column"
+              ClipboardCopyMode="IncludeHeader"
+              ColumnWidth="*"
+              GridLinesVisibility="Horizontal"
+              HorizontalGridLinesBrush="LightGray"
+              AutoGenerateColumns="False"
+              CurrentCellChanged="datagrid_CurrentCellChanged"
+              CanUserAddRows="True"
+              SelectionMode="Single"
+              CanUserDeleteRows="True"
+              CanUserResizeColumns="True">
+
+        <DataGrid.Columns>
+            <DataGridTextColumn Header="Name" MinWidth="100" Binding="{Binding Name}" />
+            <DataGridTextColumn Header="X" Binding="{Binding X}" />
+            <DataGridTextColumn Header="Y" Binding="{Binding Y}" />
+
+            <!--削除ボタン-->
+            <DataGridTemplateColumn Header="操作" DisplayIndex="3">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Button Content="削除" x:Name="btnDelete" Click="Delete_Click" Margin="2" />
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+        </DataGrid.Columns>
+    </DataGrid>
+</UserControl>
