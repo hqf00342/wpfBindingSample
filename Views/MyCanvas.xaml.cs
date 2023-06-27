@@ -102,7 +102,7 @@ namespace wpfRectangleBindingTest
         /// 要素の追加、削除、全削除に対しThumbをCanvasへ追加削除している。
         /// このMyCanvasのメイン
         /// </summary>
-        /// <param name="sender">ObservableCollection{MapPoint}</param>
+        /// <param name="sender">ObservableCollection</param>
         /// <param name="e">変更通知情報</param>
         private void Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
@@ -156,11 +156,11 @@ namespace wpfRectangleBindingTest
         /// </summary>
         private void RectInfo_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            //senderはMapPointデータそのもの
+            //senderはデータ
             var info = sender as RectInfo;
             if (info == null) return;
 
-            //操作すべきRectangleを取得
+            //操作すべきRectangleを検索
             var target = FindRectangle(info);
             if (target == null) return;
 
