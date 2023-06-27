@@ -45,11 +45,21 @@ namespace wpfRectangleBindingTest
         {
             if (oldValue is RectInfo o)
             {
-                o.Selected = false;
+                //選択アイテム変更。以前選択されていたアイテム
+                var target = FindRectangle(o);
+                if (target != null)
+                {
+                    target.Fill = Brushes.SteelBlue;
+                }
             }
             if (newValue is RectInfo n)
             {
-                n.Selected = true;
+                //選択アイテム変更。今回選択されたアイテム
+                var target = FindRectangle(n);
+                if (target != null)
+                {
+                    target.Fill = Brushes.Red;
+                }
             }
         }
 
@@ -166,11 +176,6 @@ namespace wpfRectangleBindingTest
 
                 case "Y":
                     Canvas.SetTop(target, info.Y);
-                    break;
-
-                case "Selected":
-                    //選択アイテム変更。色を変更
-                    target.Fill = info.Selected ? Brushes.Red : Brushes.SteelBlue;
                     break;
 
                 default:

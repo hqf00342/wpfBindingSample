@@ -22,16 +22,10 @@ public class RectInfo : BindableBase
 
     public int Y { get => _y; set => SetProperty(ref _y, value); }
 
-    //選択状態を表す
-    private bool _selected;
-
-    public bool Selected { get => _selected; set => SetProperty(ref _selected, value); }
-
     public RectInfo(string name, int x, int y)
     {
         Name = name;
         X = x;
         Y = y;
-        Selected = false;
     }
 }
