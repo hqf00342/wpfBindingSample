@@ -1,7 +1,5 @@
 # wpf ドラッグ移動サンプル
 
-A sample code to drag UIElement on Canvas (WPF with MVVM).
-
 MVVMを利用しているケースでのCanvas上のUIElementをドラッグ移動させるサンプル。
 
 
