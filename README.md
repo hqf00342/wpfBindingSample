@@ -5,15 +5,9 @@ MVVMを利用しているケースでのCanvas上のUIElementをドラッグ移�
 
 - .NET 6.0 
 - WPF
-- MVVMライブラリは利用せず。INotifyPropertyChangedの単純実装。
+- MVVMライブラリは利用せず。INotifyPropertyChangedを単純実装。
 - 見やすくするために、わざと左右パネルをUserControl化しファイル分離。
 - `RectInfo`というデータクラスでRectangleを管理
 
 ![sample](/img/a.gif) 
 
-
-### Licence
-
-MIT
-
-hqf00342@nifty.com
