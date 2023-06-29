@@ -13,29 +13,12 @@ public class ViewModel : BindableBase
 
     /// <summary>
     /// 選択中のアイテム
-    /// Mainwindow.xamlでMyCanvasにBindingされている
     /// </summary>
     private RectInfo? _SelectedItem;
 
     public RectInfo? SelectedItem { get => _SelectedItem; set => SetProperty(ref _SelectedItem, value); }
 
     /// <summary>アイテム削除コマンド</summary>
-    public DelegateCommand DeleteItemCommand { get; }
-
-    public ViewModel()
-    {
-        DeleteItemCommand = new DelegateCommand(DeleteItem);
-    }
-
-    /// <summary>
-    /// アイテム削除コマンド本体
-    /// </summary>
-    /// <param name="obj">削除したいRectInfo</param>
-    private void DeleteItem(object? obj)
-    {
-        if (obj is RectInfo item)
-        {
-            RectInfoCollection.Remove(item);
-        }
-    }
+    private DelegateCommand? _delCmd;
+    public DelegateCommand DeleteItemCommand => _delCmd ??= new (o => { if (o is RectInfo item) RectInfoCollection.Remove(item); });
 }
