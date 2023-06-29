@@ -1,4 +1,4 @@
-﻿using wpfRectangleBindingTest.MvvmUtils;
+﻿using MvvmUtils;
 
 namespace wpfRectangleBindingTest.Models;
 

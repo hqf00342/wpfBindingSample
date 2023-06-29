@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace wpfRectangleBindingTest.MvvmUtils;
+namespace MvvmUtils;
 
 /// <summary>
 /// INotifyPropertyChanged 実装用基底クラス
