@@ -5,17 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:wpfBindingSample"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="350" Width="770">
     <Window.DataContext>
         <local:ViewModel />
     </Window.DataContext>
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="250" />
             <ColumnDefinition Width="5" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="250" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
 
         <DataGrid Name="datagrid"
               ItemsSource="{Binding RectInfoCollection}"
@@ -34,7 +39,7 @@
               CanUserResizeColumns="True">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" MinWidth="100" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Name" MinWidth="50" Binding="{Binding Name}" />
                 <DataGridTextColumn Header="X" Binding="{Binding X}" />
                 <DataGridTextColumn Header="Y" Binding="{Binding Y}" />
 
@@ -51,6 +56,41 @@
 
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" />
 
-        <local:MyCanvas Grid.Column="2" Items="{Binding RectInfoCollection}" SelectedItem="{Binding ElementName=datagrid,Path=SelectedItem, Mode=TwoWay}" />
+        <!--Canvasを貼りそのうえで移動-->
+        <local:MyCanvas Grid.Column="2"
+                        Items="{Binding RectInfoCollection}"
+                        SelectedItem="{Binding ElementName=datagrid,Path=SelectedItem, Mode=TwoWay}" />
+
+        <!--ListBoxにCanvasを貼り付け-->
+        <ListBox Grid.Column="3" 
+                 x:Name="listbox"
+                 Background="#ffeeee"
+                 ItemsSource="{Binding RectInfoCollection}" 
+                 SelectedItem="{Binding ElementName=datagrid,Path=SelectedItem, Mode=TwoWay}"
+                 MouseMove="Rect_mouseMove" 
+                 MouseUp="Rect_mouseUp">
+            
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Rectangle Fill="Blue" Width="20" Height="20" MouseDown="Rect_mouseDown" MouseMove="Rect_mouseMove" MouseUp="Rect_mouseUp"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+
+        <TextBlock Grid.Column="2" Grid.Row="1" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" Text="Canvas"/>
+        <TextBlock Grid.Column="3" Grid.Row="1" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" Text="ListBox"/>
     </Grid>
 </Window>
