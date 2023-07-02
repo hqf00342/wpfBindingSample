@@ -90,6 +90,7 @@
             </ListBox.ItemContainerStyle>
         </ListBox>
 
+        <TextBlock Grid.Column="0" Grid.Row="1" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" Text="Datagrid"/>
         <TextBlock Grid.Column="2" Grid.Row="1" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" Text="Canvas"/>
         <TextBlock Grid.Column="3" Grid.Row="1" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" Text="ListBox"/>
     </Grid>
