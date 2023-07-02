@@ -6,12 +6,10 @@ namespace wpfBindingSample;
 public class ViewModel : BindableBase
 {
     /// <summary>
-    /// Rectangleの位置情報コレクション
-    /// </summary>
-    //public ObservableCollection<RectInfo> RectInfoCollection { get; set; } = new();
-
-    private ObservableCollection<RectInfo> _rectInfoCollection = null!;
-    public ObservableCollection<RectInfo> RectInfoCollection { get => _rectInfoCollection; set => SetProperty(ref _rectInfoCollection, value); }
+    /// Rectangleコレクション。
+    /// 本来はINotifyPropertyChanged実装すべきだがこのサンプルでは変更されないので
+    /// getterのみの通常プロパティとしている</summary>
+    public ObservableCollection<RectInfo> RectInfoCollection { get; } = new();
 
     /// <summary>アイテム削除コマンド</summary>
     private DelegateCommand? _delCmd;

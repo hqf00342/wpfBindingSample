@@ -26,7 +26,7 @@ public partial class MyCanvas : UserControl
     //ドラッグ用：ドラッグ中のRectangle。ドラッグ中でない場合はnull
     private Rectangle? _dragRectangle;
 
-    //選択されているアイテム
+    //Selectedプロパティ：選択中のアイテム
     public RectInfo SelectedItem
     {
         get { return (RectInfo)GetValue(SelectedItemProperty); }
@@ -41,6 +41,11 @@ public partial class MyCanvas : UserControl
         (d as MyCanvas)?.SelectedItemChanged(e.OldValue, e.NewValue);
     }
 
+    /// <summary>
+    /// 選択中のアイテム変更処理。色を変更
+    /// </summary>
+    /// <param name="oldValue">変更前のアイテム</param>
+    /// <param name="newValue">変更後のアイテム</param>
     private void SelectedItemChanged(object oldValue, object newValue)
     {
         if (oldValue is RectInfo o)
@@ -85,27 +90,26 @@ public partial class MyCanvas : UserControl
     /// </summary>
     private static void ItemsChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is MyCanvas canvas)
+        if (d is MyCanvas mycanvas)
         {
             // Itemsプロパティに変更通知を登録
-            canvas.Items.CollectionChanged += canvas.Items_CollectionChanged;
+            mycanvas.Items.CollectionChanged += mycanvas.Items_CollectionChanged;
 
             //ItemsのデータをCanvasに初期登録する
             if (e.NewValue is IEnumerable<RectInfo> infos)
             {
                 foreach (var info in infos)
                 {
-                    canvas.AddRectangle(info);
-                    info.PropertyChanged += canvas.RectInfo_PropertyChanged;
+                    mycanvas.AddRectangle(info);
+                    info.PropertyChanged += mycanvas.RectInfo_PropertyChanged;
                 }
             }
         }
     }
 
     /// <summary>
-    /// ObservableCollectionの変更コールバック
-    /// 要素の追加、削除、全削除に対しThumbをCanvasへ追加削除している。
-    /// このMyCanvasのメイン
+    /// Itemsに変更があったときに呼ばれるコールバック
+    /// 追加、削除、全削除に対しThumbをCanvasへ追加削除している。
     /// </summary>
     /// <param name="sender">ObservableCollection</param>
     /// <param name="e">変更通知情報</param>
@@ -156,12 +160,11 @@ public partial class MyCanvas : UserControl
     }
 
     /// <summary>
-    /// コレクション内のRectInfoのプロパティ変更通知用コールバック
-    /// 変更されたプロパティを画面に反映させる。
+    /// RectInfoのプロパティ変更通知用コールバック
+    /// XやYプロパティの変更を画面に反映させる。
     /// </summary>
     private void RectInfo_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        //senderはデータ
         var info = sender as RectInfo;
         if (info == null) return;
 
@@ -188,17 +191,16 @@ public partial class MyCanvas : UserControl
         }
     }
 
-    internal void AddRectangle(RectInfo info)
+    internal void AddRectangle(RectInfo rinfo)
     {
         var r = new Rectangle
         {
             Width = 20,
             Height = 20,
             Fill = Brushes.SteelBlue,
-            ToolTip = info.Name,
+            ToolTip = rinfo.Name,
             //RectangleとRectInfoの紐づけにTagを使う
-            //Canvasを使わずItemsControlを使えば不要
-            Tag = info
+            Tag = rinfo
         };
 
         //イベント追加
@@ -208,15 +210,13 @@ public partial class MyCanvas : UserControl
 
         //パネルに追加
         canvas2.Children.Add(r);
-        Canvas.SetLeft(r, info.X);
-        Canvas.SetTop(r, info.Y);
-
-        //info.PropertyChanged += RectInfo_PropertyChanged;
+        Canvas.SetLeft(r, rinfo.X);
+        Canvas.SetTop(r, rinfo.Y);
     }
 
-    internal void RemoveRectangle(RectInfo info)
+    internal void RemoveRectangle(RectInfo rinfo)
     {
-        var r = FindRectangle(info);
+        var r = FindRectangle(rinfo);
         if (r != null)
         {
             canvas2.Children.Remove(r);
@@ -225,6 +225,21 @@ public partial class MyCanvas : UserControl
             r.MouseMove -= MoveRectangle;
             r.Tag = null;
         }
+    }
+
+    private void DragStart(object o, MouseEventArgs e)
+    {
+        //対象のRectangle
+        _dragRectangle = (Rectangle)o;
+
+        //Rectangleをキャプチャしドラッグ開始
+        _dragRectangle.CaptureMouse();
+
+        //Rectangle内のどこをクリックされたか記憶
+        _dragOffset = e.GetPosition(_dragRectangle);
+
+        //選択されたアイテムを通知する
+        this.SelectedItem = (RectInfo)_dragRectangle.Tag;
     }
 
     private void DragEnd(object sender, MouseButtonEventArgs e)
@@ -242,25 +257,11 @@ public partial class MyCanvas : UserControl
             var pos = e.GetPosition(canvas2);
             if (rect.Tag is RectInfo info)
             {
-                //RectinfoのX/Yを変更すると画面上も動く
+                //RectinfoのX/Yプロパティを変更。
+                //変更がItemsに伝わり画面上も動く
                 info.X = (int)(pos.X - _dragOffset.X);
                 info.Y = (int)(pos.Y - _dragOffset.Y);
             }
         }
-    }
-
-    private void DragStart(object o, MouseEventArgs e)
-    {
-        //対象のRectangle
-        _dragRectangle = (Rectangle)o;
-
-        //Rectangleをキャプチャしドラッグ開始
-        _dragRectangle.CaptureMouse();
-
-        //Rectangle内のどこをクリックされたか記憶
-        _dragOffset = e.GetPosition(_dragRectangle);
-
-        //選択されたアイテムを通知する
-        this.SelectedItem = (RectInfo)_dragRectangle.Tag;
     }
 }
