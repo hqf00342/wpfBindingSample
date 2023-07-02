@@ -17,10 +17,40 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <local:MyDataGrid Grid.Column="0" DataContext="{Binding}" />
+        <DataGrid Name="datagrid"
+              ItemsSource="{Binding RectInfoCollection}"
+              Background="White"
+              Padding="5"
+              HeadersVisibility="Column"
+              ClipboardCopyMode="IncludeHeader"
+              ColumnWidth="*"
+              GridLinesVisibility="Horizontal"
+              HorizontalGridLinesBrush="LightGray"
+              AutoGenerateColumns="False"
+              CurrentCellChanged="Datagrid_CurrentCellChanged"
+              CanUserAddRows="True"
+              SelectionMode="Single"
+              CanUserDeleteRows="True"
+              CanUserResizeColumns="True">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" MinWidth="100" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="X" Binding="{Binding X}" />
+                <DataGridTextColumn Header="Y" Binding="{Binding Y}" />
+
+                <!--削除ボタン-->
+                <DataGridTemplateColumn Header="操作" DisplayIndex="3">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="削除" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.DeleteItemCommand}" CommandParameter="{Binding}" Margin="2" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
 
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" />
 
-        <local:MyCanvas Grid.Column="2" Items="{Binding RectInfoCollection}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+        <local:MyCanvas Grid.Column="2" Items="{Binding RectInfoCollection}" SelectedItem="{Binding ElementName=datagrid,Path=SelectedItem, Mode=TwoWay}" />
     </Grid>
 </Window>

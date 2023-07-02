@@ -11,18 +11,12 @@ public class ViewModel : BindableBase
     /// </summary>
     //public ObservableCollection<RectInfo> RectInfoCollection { get; set; } = new();
 
-    private ObservableCollection<RectInfo> _rectInfoCollection =null!;
+    private ObservableCollection<RectInfo> _rectInfoCollection = null!;
     public ObservableCollection<RectInfo> RectInfoCollection { get => _rectInfoCollection; set => SetProperty(ref _rectInfoCollection, value); }
-
-    /// <summary>
-    /// 選択中のアイテム
-    /// </summary>
-    private RectInfo? _SelectedItem;
-
-    public RectInfo? SelectedItem { get => _SelectedItem; set => SetProperty(ref _SelectedItem, value); }
 
     /// <summary>アイテム削除コマンド</summary>
     private DelegateCommand? _delCmd;
+
     public DelegateCommand DeleteItemCommand => _delCmd ??= new(o => { if (o is RectInfo item) RectInfoCollection.Remove(item); });
 
     public ViewModel()
