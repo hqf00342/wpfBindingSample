@@ -1,11 +1,13 @@
 # wpf ドラッグ移動サンプル
 
-MVVMを利用しているケースでのCanvas上のUIElementをドラッグ移動させるサンプル。
-
+MVVM Bindingサンプル。
 
 - WPF / .NET 6.0 
-- MVVMライブラリは利用せず、MvvmUtilsフォルダに単純なものを用意。
+- MVVMライブラリ未利用。MvvmUtilsフォルダに単純なものを用意。
 - `RectInfo`というデータクラスでRectangleを管理
+- Canvas上のUIElementをドラッグ移動させるとDataGridに反映。
+- 逆方向も反映
+
 
 
 ![sample](/img/a.gif) 
