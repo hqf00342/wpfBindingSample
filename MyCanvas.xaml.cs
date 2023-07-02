@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -8,7 +7,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using wpfBindingSample.Models;
 
 namespace wpfBindingSample;
 
@@ -93,7 +91,7 @@ public partial class MyCanvas : UserControl
             canvas.Items.CollectionChanged += canvas.Items_CollectionChanged;
 
             //ItemsのデータをCanvasに初期登録する
-            if(e.NewValue is IEnumerable<RectInfo> infos)
+            if (e.NewValue is IEnumerable<RectInfo> infos)
             {
                 foreach (var info in infos)
                 {
@@ -104,7 +102,6 @@ public partial class MyCanvas : UserControl
         }
     }
 
-    
     /// <summary>
     /// ObservableCollectionの変更コールバック
     /// 要素の追加、削除、全削除に対しThumbをCanvasへ追加削除している。
@@ -215,7 +212,6 @@ public partial class MyCanvas : UserControl
         Canvas.SetTop(r, info.Y);
 
         //info.PropertyChanged += RectInfo_PropertyChanged;
-
     }
 
     internal void RemoveRectangle(RectInfo info)
@@ -234,10 +230,9 @@ public partial class MyCanvas : UserControl
     private void DragEnd(object sender, MouseButtonEventArgs e)
     {
         _dragRectangle = null;
-        if(sender is Rectangle r)
+        if (sender is Rectangle r)
             r.ReleaseMouseCapture();
     }
-
 
     private void MoveRectangle(object o, MouseEventArgs e)
     {

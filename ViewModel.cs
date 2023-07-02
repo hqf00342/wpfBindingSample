@@ -1,6 +1,5 @@
 ﻿using MvvmUtils;
 using System.Collections.ObjectModel;
-using wpfBindingSample.Models;
 
 namespace wpfBindingSample;
 
@@ -22,10 +21,12 @@ public class ViewModel : BindableBase
     public ViewModel()
     {
         //デモ用に4つのRectangleを設置
-        RectInfoCollection = new();
-        RectInfoCollection.Add(new RectInfo("1", 10, 10));
-        RectInfoCollection.Add(new RectInfo("2", 200, 10));
-        RectInfoCollection.Add(new RectInfo("3", 10, 200));
-        RectInfoCollection.Add(new RectInfo("4", 200, 200));
+        RectInfoCollection = new()
+        {
+            new RectInfo("1", 10, 10),
+            new RectInfo("2", 200, 10),
+            new RectInfo("3", 10, 200),
+            new RectInfo("4", 200, 200)
+        };
     }
 }
