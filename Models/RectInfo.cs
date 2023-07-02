@@ -1,6 +1,6 @@
 ﻿using MvvmUtils;
 
-namespace wpfRectangleBindingTest.Models;
+namespace wpfBindingSample.Models;
 
 /// <summary>
 /// Datagridに表示する情報
