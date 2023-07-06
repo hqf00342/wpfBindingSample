@@ -20,3 +20,4 @@ MVVM Bindingサンプル。
 - 削除ボタンをコマンド化。
 - ファイル数削減。
 - DataGridをMainWindow内に直接配置。これにより`SelectedItem`プロパティをDataGridとCanvas間で直接Bindingするように変更、ViewModel管理をやめた。
+- データ管理(Model)をMyDataクラスに分離
