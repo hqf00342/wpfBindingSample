@@ -10,9 +10,9 @@ MVVM Bindingサンプル。
 
 
 
-![sample](/img/a.gif) 
+![sample](img/a.gif) 
 
-### 更新
+## 更新
 
 サンプルなのでより平易になるようにファイル構成などを変更。
 

@@ -6,5 +6,6 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 
+    <!-- UserControlを使う必要がないがサンプルなので。ふつうはCanvasそのものから派生させる-->
     <Canvas x:Name="canvas2" Background="AliceBlue" />
 </UserControl>

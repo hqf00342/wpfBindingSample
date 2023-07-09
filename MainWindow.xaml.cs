@@ -6,16 +6,32 @@ namespace wpfBindingSample
 {
     public partial class MainWindow : Window
     {
-        //ドラッグ用：ドラッグ開始位置
-        private Point _dragOffset;
-
-        //ドラッグ用：ドラッグ中のRectangle。ドラッグ中でない場合はnull
-        private Rectangle? _dragRectangle;
-
         public MainWindow()
         {
             InitializeComponent();
         }
+
+        /// <summary>
+        /// DataGridのセル編集完了イベント
+        /// デフォルトではセル編集だけではデータ反映されず、フォーカス移動が必要なため
+        /// セル編集後すぐにデータ反映されるようにする。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Datagrid_CurrentCellChanged(object sender, System.EventArgs e)
+        {
+            datagrid.CommitEdit();
+        }
+
+        #region ListBox用イベント
+
+        //ドラッグ開始位置
+        //ドラッグしているUIElementのどこをつかんだかを記憶
+        private Point _dragOffset;
+
+        //ドラッグ中のRectangle
+        // MouseDown(DargStart)で設定、MouseUp(DragEnd)でnullになる。
+        private Rectangle? _dragRectangle;
 
         /// <summary>
         /// ListBox内Rectangleのマウスイベント：Down
@@ -59,6 +75,6 @@ namespace wpfBindingSample
             this.Cursor = Cursors.Arrow;
         }
 
-        private void Datagrid_CurrentCellChanged(object sender, System.EventArgs e) => datagrid.CommitEdit();
+        #endregion ListBox用イベント
     }
 }

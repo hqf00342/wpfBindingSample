@@ -11,7 +11,9 @@ using System.Windows.Shapes;
 namespace wpfBindingSample;
 
 /// <summary>
-/// MyCanvas.xaml の相互作用ロジック
+/// MyCanvas
+/// Itemsプロパティ、SelectedItemプロパティを追加したカスタムCanvas
+/// Canvas派生にすべきだがサンプルのためUserControlとしている。
 /// </summary>
 public partial class MyCanvas : UserControl
 {
@@ -20,13 +22,19 @@ public partial class MyCanvas : UserControl
         InitializeComponent();
     }
 
-    //ドラッグ用：ドラッグ開始位置
+    //ドラッグ開始位置
+    //ドラッグしているUIElementのどこをつかんだかを記憶
     private Point _dragOffset;
 
-    //ドラッグ用：ドラッグ中のRectangle。ドラッグ中でない場合はnull
+    //ドラッグ中のRectangle
+    // MouseDown(DargStart)で設定、MouseUp(DragEnd)でnullになる。
     private Rectangle? _dragRectangle;
 
-    //Selectedプロパティ：選択中のアイテム
+    /// <summary>
+    /// SelectedItem依存関係プロパティ
+    /// 選択中のアイテム。
+    /// VisualStudioでは「propdp」スニペットで生成
+    /// </summary>
     public RectInfo SelectedItem
     {
         get { return (RectInfo)GetValue(SelectedItemProperty); }
@@ -36,13 +44,19 @@ public partial class MyCanvas : UserControl
     public static readonly DependencyProperty SelectedItemProperty =
         DependencyProperty.Register("SelectedItem", typeof(RectInfo), typeof(MyCanvas), new PropertyMetadata(null, SelectedItem_Changed));
 
+    /// <summary>
+    /// SelectedItemが変更されたときに呼ばれるメソッド
+    /// 変更前と変更後の値が分かるのでそこから色を変える
+    /// </summary>
     private static void SelectedItem_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
+        //staticメソッドなのでdからインスタンスを探し
+        //インスタンス内へ反映させる
         (d as MyCanvas)?.SelectedItemChanged(e.OldValue, e.NewValue);
     }
 
     /// <summary>
-    /// 選択中のアイテム変更処理。色を変更
+    /// 選択中のアイテム変更処理。背景色を変更
     /// </summary>
     /// <param name="oldValue">変更前のアイテム</param>
     /// <param name="newValue">変更後のアイテム</param>
@@ -72,7 +86,7 @@ public partial class MyCanvas : UserControl
     /// Items依存関係プロパティ
     /// コレクション系UIElementのItemsSource等に相当するもの。
     /// Canvasベースにしたので自前実装
-    /// このコレクションの変更通知を内部処理し、Canvas上にピンを追加削除、移動させる。
+    /// このコレクションの変更通知を内部処理し、Canvas上のUIを追加削除、移動させる。
     /// </summary>
     public ObservableCollection<RectInfo> Items
     {
@@ -85,7 +99,7 @@ public partial class MyCanvas : UserControl
 
     /// <summary>
     /// Items依存関係プロパティの変更コールバック
-    /// インスタンスがBindingされると呼ばれるのでObservableCollectionの変更通知を登録する。
+    /// 変更されると呼ばれるのでObservableCollectionの変更通知を登録する。
     /// static関数なので、インスタンス側で登録する。
     /// </summary>
     private static void ItemsChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -108,8 +122,9 @@ public partial class MyCanvas : UserControl
     }
 
     /// <summary>
-    /// Itemsに変更があったときに呼ばれるコールバック
-    /// 追加、削除、全削除に対しThumbをCanvasへ追加削除している。
+    /// ObservableCollectionの変更通知処理
+    /// Itemsに追加、削除があったときに呼ばれるコールバック
+    /// CanvasへRectangleを追加/削除している。
     /// </summary>
     /// <param name="sender">ObservableCollection</param>
     /// <param name="e">変更通知情報</param>
@@ -150,6 +165,7 @@ public partial class MyCanvas : UserControl
 
     /// <summary>
     /// RectInfoからRectangleを探す。
+    /// Rectangle.Tagプロパティに埋め込んだ情報から特定する。
     /// </summary>
     /// <param name="info">検索対象</param>
     /// <returns>見つからない場合はnull</returns>
@@ -161,7 +177,7 @@ public partial class MyCanvas : UserControl
 
     /// <summary>
     /// RectInfoのプロパティ変更通知用コールバック
-    /// XやYプロパティの変更を画面に反映させる。
+    /// Name, X, Yプロパティの変更を画面に反映させる。
     /// </summary>
     private void RectInfo_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {

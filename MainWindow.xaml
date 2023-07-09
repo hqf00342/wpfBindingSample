@@ -22,6 +22,7 @@
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
 
+        <!--DataGrid。見た目調整のため長くなっている-->
         <DataGrid Name="datagrid"
               ItemsSource="{Binding RectInfoCollection}"
               Background="White"
@@ -56,7 +57,7 @@
 
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" />
 
-        <!--Canvasを貼りそのうえで移動-->
+        <!--CanvasにItemsとSelectedItem機能を付与したMyCanvas-->
         <local:MyCanvas Grid.Column="2"
                         Items="{Binding RectInfoCollection}"
                         SelectedItem="{Binding ElementName=datagrid,Path=SelectedItem, Mode=TwoWay}" />
@@ -70,18 +71,21 @@
                  MouseMove="Rect_mouseMove" 
                  MouseUp="Rect_mouseUp">
             
+            <!--ベースをCanvasに変更-->
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
 
+            <!--表示する子アイテムをRectangleに変更-->
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Rectangle Fill="Blue" Width="20" Height="20" MouseDown="Rect_mouseDown" MouseMove="Rect_mouseMove" MouseUp="Rect_mouseUp"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
             
+            <!--RectangleとデータのBinding設定-->
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="Canvas.Left" Value="{Binding X}"/>
