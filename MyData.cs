@@ -3,9 +3,8 @@
 namespace wpfBindingSample;
 
 /// <summary>
-/// アプリ内のデータを一元管理するモデルクラス。
-/// シングルトン(アプリ内で唯一のデータ)のため、static classとしている。
-/// そのためインスタンス生成（new)する必要はなく、直接アクセスする。
+/// アプリ内のデータを一元管理する static インスタンス。
+/// インスタンス生成（new)する必要はなく直接アクセスする。
 /// これらのデータはViewModelから参照され、最終的にGUIに反映される。
 /// </summary>
 public static class MyData
