@@ -1,5 +1,6 @@
 ﻿using MvvmUtils;
 using System.Collections.ObjectModel;
+using wpfBindingSample.Models;
 
 namespace wpfBindingSample;
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace wpfBindingSample;
+namespace wpfBindingSample.Models;
 
 /// <summary>
 /// アプリ内のデータを一元管理する static インスタンス。

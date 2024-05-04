@@ -1,6 +1,6 @@
 ﻿using MvvmUtils;
 
-namespace wpfBindingSample;
+namespace wpfBindingSample.Models;
 
 /// <summary>
 /// Datagridに表示する情報
