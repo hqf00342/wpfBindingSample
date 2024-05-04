@@ -10,6 +10,16 @@ using System.Windows.Shapes;
 
 namespace wpfBindingSample;
 
+/// <summary>
+/// Canvas上の図形を管理するItemsプロパティを持つCanvas。
+/// CanvasはChildrenプロパティで子アイテムを管理しているが
+/// ChildrenとMVVMバインドしても子アイテムの追加/削除/変更を通知する機能がないため
+/// DataGridやListBoxの様にMVVM機構でModelの変更をView(Canvas)に反映できない。
+/// そのため、ViewModelとバインドして変更通知できる
+/// ・Itemsプロパティ
+/// ・SelectedItemプロパティ
+/// を追加している。
+/// </summary>
 public class MyCanvas : Canvas
 {
     //ドラッグ開始位置
@@ -18,7 +28,7 @@ public class MyCanvas : Canvas
 
     //ドラッグ中のRectangle
     // MouseDown(DargStart)で設定、MouseUp(DragEnd)でnullになる。
-    private Rectangle? _dragRectangle;
+    //private Rectangle? _dragRectangle;
 
     /// <summary>
     /// SelectedItem 依存関係プロパティ
@@ -43,7 +53,7 @@ public class MyCanvas : Canvas
         //このメソッドはstaticなので
         //対象のMyCanvasインスタンスをdから探し
         //そのインスタンス内でアイテム変更を処理させる。
-        if(d is MyCanvas mycanvas)
+        if (d is MyCanvas mycanvas)
         {
             mycanvas.SelectedItemChanged(e.OldValue, e.NewValue);
         }
@@ -57,9 +67,9 @@ public class MyCanvas : Canvas
     /// <param name="newValue">変更後のアイテム</param>
     private void SelectedItemChanged(object oldValue, object newValue)
     {
+        //古い選択アイテムは青色に戻す。
         if (oldValue is RectInfo o)
         {
-            //古い選択アイテムは青色に戻す。
             var target = FindRectangle(o);
             if (target != null)
             {
@@ -67,9 +77,9 @@ public class MyCanvas : Canvas
             }
         }
 
+        //新しい選択アイテムは赤く塗る。
         if (newValue is RectInfo n)
         {
-            //新しい選択アイテムは赤く塗る。
             var target = FindRectangle(n);
             if (target != null)
             {
@@ -163,12 +173,15 @@ public class MyCanvas : Canvas
     }
 
     /// <summary>
-    /// RectInfoからRectangleを探す。
+    /// Canvas上のRectangle一覧から指定のRectInfoを持つものをを探す。
     /// Rectangle.Tagプロパティに埋め込んだRectInfo情報から特定する。
-    /// 座標から特定しても良いが小数点以下が一致しない可能性があるので
-    /// Tagプロパティに埋め込んでいる情報を使う。
-    /// Tagプロパティへの埋め込みはAddRectangle()で生成時に実施している。
     /// </summary>
+    /// <remarks>
+    /// Rectangleの座標から特定しても良いが小数点以下が一致しない可能性があるので
+    /// TagプロパティにRectInfoを埋め込み、一致するかをチェックする。
+    /// 埋め込みはAddRectangle()で生成時に実施している。
+    /// Tagに埋め込むとGC回収されないケースもあるので別の方法の方が良いと思う。
+    /// </remarks>
     /// <param name="info">検索対象</param>
     /// <returns>見つからない場合はnull</returns>
     private Rectangle? FindRectangle(RectInfo info)
@@ -209,6 +222,10 @@ public class MyCanvas : Canvas
         }
     }
 
+    /// <summary>
+    /// CanvasにRectangleを追加する。
+    /// </summary>
+    /// <param name="rinfo">rectangleの位置情報などを持つRectInfo</param>
     internal void AddRectangle(RectInfo rinfo)
     {
         var r = new Rectangle
@@ -232,6 +249,10 @@ public class MyCanvas : Canvas
         Canvas.SetTop(r, rinfo.Y);
     }
 
+    /// <summary>
+    /// Canvas上のRectangleを削除する。
+    /// </summary>
+    /// <param name="rinfo"></param>
     internal void RemoveRectangle(RectInfo rinfo)
     {
         var r = FindRectangle(rinfo);
@@ -247,36 +268,35 @@ public class MyCanvas : Canvas
 
     private void DragStart(object o, MouseEventArgs e)
     {
-        //対象のRectangle
-        _dragRectangle = (Rectangle)o;
+        if (o is Rectangle r)
+        {
+            //Rectangleをキャプチャしドラッグ開始
+            r.CaptureMouse();
 
-        //Rectangleをキャプチャしドラッグ開始
-        _dragRectangle.CaptureMouse();
+            //Rectangle内のどこをクリックされたか記憶
+            _dragOffset = e.GetPosition(r);
 
-        //Rectangle内のどこをクリックされたか記憶
-        _dragOffset = e.GetPosition(_dragRectangle);
-
-        //選択されたアイテムを通知する
-        this.SelectedItem = (RectInfo)_dragRectangle.Tag;
+            //選択されたアイテムを通知する
+            this.SelectedItem = (RectInfo)r.Tag;
+        }
     }
 
     private void DragEnd(object sender, MouseButtonEventArgs e)
     {
-        _dragRectangle = null;
+        //Rectangleのキャプチャを解放
         if (sender is Rectangle r)
             r.ReleaseMouseCapture();
     }
 
     private void MoveRectangle(object o, MouseEventArgs e)
     {
-        var rect = (Rectangle)o;
-        if (rect == _dragRectangle)
+        if (o is Rectangle r && r.IsMouseCaptured)
         {
             var pos = e.GetPosition(this);
-            if (rect.Tag is RectInfo info)
+            if (r.Tag is RectInfo info)
             {
-                //RectinfoのX/Yプロパティを変更。
-                //変更がItemsに伝わり画面上も動く
+                //RectInfo.X/Yプロパティを変更。
+                //その変更はItemsプロパティに伝わり画面上も動く
                 info.X = (int)(pos.X - _dragOffset.X);
                 info.Y = (int)(pos.Y - _dragOffset.Y);
             }
