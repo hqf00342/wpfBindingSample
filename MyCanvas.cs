@@ -12,15 +12,16 @@ using wpfBindingSample.Models;
 namespace wpfBindingSample;
 
 /// <summary>
-/// Canvas上の図形を管理するItemsプロパティを持つCanvas。
-/// CanvasはChildrenプロパティで子アイテムを管理しているが
-/// ChildrenとMVVMバインドしても子アイテムの追加/削除/変更を通知する機能がないため
-/// DataGridやListBoxの様にMVVM機構でModelの変更をView(Canvas)に反映できない。
-/// そのため、ViewModelとバインドして変更通知できる
+/// MyCanvasクラス(Canvas派生)
+/// </summary>
+/// <remarks>
+/// 通常のCanvasはChildrenプロパティで子アイテムを管理しているが
+/// Childrenプロパティは追加/削除/変更通知機能がないため
+/// DataGridやListBoxの様にModelの変更をCanvasに反映できない。
+/// そのため、ViewModelとバインドして変更通知できる以下のプロパティを追加している。
 /// ・Itemsプロパティ
 /// ・SelectedItemプロパティ
-/// を追加している。
-/// </summary>
+/// </remarks>
 public class MyCanvas : Canvas
 {
     //ドラッグ開始位置
@@ -197,29 +198,31 @@ public class MyCanvas : Canvas
     /// </summary>
     private void RectInfo_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        var info = sender as RectInfo;
-        if (info == null) return;
-
-        //操作すべきRectangleを検索
-        var target = FindRectangle(info);
-        if (target == null) return;
-
-        switch (e.PropertyName)
+        if (sender is RectInfo rinfo)
         {
-            case "Name":
-                target.ToolTip = info.Name;
-                break;
+            //操作すべきRectangleを検索
+            var target = FindRectangle(rinfo);
+            if (target == null) return;
 
-            case "X":
-                Canvas.SetLeft(target, info.X);
-                break;
+            //変更されたRectInfoのプロパティに応じて
+            //Canvas上のRectangleに変更を反映
+            switch (e.PropertyName)
+            {
+                case "Name":
+                    target.ToolTip = rinfo.Name;
+                    break;
 
-            case "Y":
-                Canvas.SetTop(target, info.Y);
-                break;
+                case "X":
+                    Canvas.SetLeft(target, rinfo.X);
+                    break;
 
-            default:
-                break;
+                case "Y":
+                    Canvas.SetTop(target, rinfo.Y);
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 
