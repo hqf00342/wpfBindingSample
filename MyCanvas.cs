@@ -10,20 +10,10 @@ using System.Windows.Shapes;
 
 namespace wpfBindingSample;
 
-/// <summary>
-/// MyCanvas
-/// Itemsプロパティ、SelectedItemプロパティを追加したカスタムCanvas
-/// Canvas派生にすべきだがサンプルのためUserControlとしている。
-/// </summary>
-public partial class MyCanvas : UserControl
+public class MyCanvas : Canvas
 {
-    public MyCanvas()
-    {
-        InitializeComponent();
-    }
-
     //ドラッグ開始位置
-    //ドラッグしているUIElementのどこをつかんだかを記憶
+    //ドラッグ対象Rectangle(UIElement)の掴んだ場所を記憶
     private Point _dragOffset;
 
     //ドラッグ中のRectangle
@@ -31,32 +21,37 @@ public partial class MyCanvas : UserControl
     private Rectangle? _dragRectangle;
 
     /// <summary>
-    /// SelectedItem依存関係プロパティ
-    /// 選択中のアイテム。
+    /// SelectedItem 依存関係プロパティ
+    /// 選択中のアイテムを表す。
     /// VisualStudioでは「propdp」スニペットで生成
     /// </summary>
     public RectInfo SelectedItem
     {
-        get { return (RectInfo)GetValue(SelectedItemProperty); }
-        set { SetValue(SelectedItemProperty, value); }
+        get => (RectInfo)GetValue(SelectedItemProperty);
+        set => SetValue(SelectedItemProperty, value);
     }
 
     public static readonly DependencyProperty SelectedItemProperty =
         DependencyProperty.Register("SelectedItem", typeof(RectInfo), typeof(MyCanvas), new PropertyMetadata(null, SelectedItem_Changed));
 
     /// <summary>
-    /// SelectedItemが変更されたときに呼ばれるメソッド
+    /// SelectedItem プロパティ変更時に呼ばれる。
     /// 変更前と変更後の値が分かるのでそこから色を変える
     /// </summary>
     private static void SelectedItem_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        //staticメソッドなのでdからインスタンスを探し
-        //インスタンス内へ反映させる
-        (d as MyCanvas)?.SelectedItemChanged(e.OldValue, e.NewValue);
+        //このメソッドはstaticなので
+        //対象のMyCanvasインスタンスをdから探し
+        //そのインスタンス内でアイテム変更を処理させる。
+        if(d is MyCanvas mycanvas)
+        {
+            mycanvas.SelectedItemChanged(e.OldValue, e.NewValue);
+        }
     }
 
     /// <summary>
     /// 選択中のアイテム変更処理。背景色を変更
+    /// SelectedItemプロパティの変更時に呼び出される。
     /// </summary>
     /// <param name="oldValue">変更前のアイテム</param>
     /// <param name="newValue">変更後のアイテム</param>
@@ -64,16 +59,17 @@ public partial class MyCanvas : UserControl
     {
         if (oldValue is RectInfo o)
         {
-            //選択アイテム変更。以前選択されていたアイテム
+            //古い選択アイテムは青色に戻す。
             var target = FindRectangle(o);
             if (target != null)
             {
                 target.Fill = Brushes.SteelBlue;
             }
         }
+
         if (newValue is RectInfo n)
         {
-            //選択アイテム変更。今回選択されたアイテム
+            //新しい選択アイテムは赤く塗る。
             var target = FindRectangle(n);
             if (target != null)
             {
@@ -84,14 +80,15 @@ public partial class MyCanvas : UserControl
 
     /// <summary>
     /// Items依存関係プロパティ
-    /// コレクション系UIElementのItemsSource等に相当するもの。
-    /// Canvasベースにしたので自前実装
+    /// Canvas上にあるRectInfo一覧を保持するList。
+    /// DataGridやListBoxのItemsSourceプロパティに相当する。
+    /// Canvasにない機能なので自前実装する。
     /// このコレクションの変更通知を内部処理し、Canvas上のUIを追加削除、移動させる。
     /// </summary>
     public ObservableCollection<RectInfo> Items
     {
-        get { return (ObservableCollection<RectInfo>)GetValue(ItemsProperty); }
-        set { SetValue(ItemsProperty, value); }
+        get => (ObservableCollection<RectInfo>)GetValue(ItemsProperty);
+        set => SetValue(ItemsProperty, value);
     }
 
     public static readonly DependencyProperty ItemsProperty =
@@ -109,10 +106,10 @@ public partial class MyCanvas : UserControl
             // Itemsプロパティに変更通知を登録
             mycanvas.Items.CollectionChanged += mycanvas.Items_CollectionChanged;
 
-            //ItemsのデータをCanvasに初期登録する
-            if (e.NewValue is IEnumerable<RectInfo> infos)
+            //Itemsに初期登録されているデータをCanvasに初期登録する
+            if (e.NewValue is IEnumerable<RectInfo> rectInfos)
             {
-                foreach (var info in infos)
+                foreach (var info in rectInfos)
                 {
                     mycanvas.AddRectangle(info);
                     info.PropertyChanged += mycanvas.RectInfo_PropertyChanged;
@@ -123,7 +120,7 @@ public partial class MyCanvas : UserControl
 
     /// <summary>
     /// ObservableCollectionの変更通知処理
-    /// Itemsに追加、削除があったときに呼ばれるコールバック
+    /// ItemsにRectInfoが追加、削除されたときに呼ばれる。
     /// CanvasへRectangleを追加/削除している。
     /// </summary>
     /// <param name="sender">ObservableCollection</param>
@@ -133,6 +130,7 @@ public partial class MyCanvas : UserControl
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Add:
+                //新しいRectInfoが追加されたのでCanvasにもRectangleを追加する
                 if (e.NewItems != null)
                 {
                     foreach (RectInfo info in e.NewItems)
@@ -144,6 +142,7 @@ public partial class MyCanvas : UserControl
                 break;
 
             case NotifyCollectionChangedAction.Remove:
+                //削除されたアイテムに対応するRectangleを削除する
                 if (e.OldItems != null)
                 {
                     foreach (RectInfo info in e.OldItems)
@@ -151,7 +150,7 @@ public partial class MyCanvas : UserControl
                         var target = FindRectangle(info);
                         if (target != null)
                         {
-                            canvas2.Children.Remove(target);
+                            this.Children.Remove(target);
                             info.PropertyChanged -= RectInfo_PropertyChanged;
                         }
                     }
@@ -165,14 +164,17 @@ public partial class MyCanvas : UserControl
 
     /// <summary>
     /// RectInfoからRectangleを探す。
-    /// Rectangle.Tagプロパティに埋め込んだ情報から特定する。
+    /// Rectangle.Tagプロパティに埋め込んだRectInfo情報から特定する。
+    /// 座標から特定しても良いが小数点以下が一致しない可能性があるので
+    /// Tagプロパティに埋め込んでいる情報を使う。
+    /// Tagプロパティへの埋め込みはAddRectangle()で生成時に実施している。
     /// </summary>
     /// <param name="info">検索対象</param>
     /// <returns>見つからない場合はnull</returns>
     private Rectangle? FindRectangle(RectInfo info)
     {
         if (info == null) return null;
-        return canvas2.Children.OfType<Rectangle>().FirstOrDefault(i => info == (RectInfo)i.Tag);
+        return this.Children.OfType<Rectangle>().FirstOrDefault(i => info == (RectInfo)i.Tag);
     }
 
     /// <summary>
@@ -225,7 +227,7 @@ public partial class MyCanvas : UserControl
         r.MouseMove += MoveRectangle;
 
         //パネルに追加
-        canvas2.Children.Add(r);
+        this.Children.Add(r);
         Canvas.SetLeft(r, rinfo.X);
         Canvas.SetTop(r, rinfo.Y);
     }
@@ -235,7 +237,7 @@ public partial class MyCanvas : UserControl
         var r = FindRectangle(rinfo);
         if (r != null)
         {
-            canvas2.Children.Remove(r);
+            this.Children.Remove(r);
             r.MouseDown -= DragStart;
             r.MouseUp -= DragEnd;
             r.MouseMove -= MoveRectangle;
@@ -270,7 +272,7 @@ public partial class MyCanvas : UserControl
         var rect = (Rectangle)o;
         if (rect == _dragRectangle)
         {
-            var pos = e.GetPosition(canvas2);
+            var pos = e.GetPosition(this);
             if (rect.Tag is RectInfo info)
             {
                 //RectinfoのX/Yプロパティを変更。
