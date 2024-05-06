@@ -19,18 +19,14 @@ namespace wpfBindingSample;
 /// Childrenプロパティは追加/削除/変更通知機能がないため
 /// DataGridやListBoxの様にModelの変更をCanvasに反映できない。
 /// そのため、ViewModelとバインドして変更通知できる以下のプロパティを追加している。
-/// ・Itemsプロパティ
-/// ・SelectedItemプロパティ
+/// ・Items プロパティ
+/// ・SelectedItem プロパティ
 /// </remarks>
 public class MyCanvas : Canvas
 {
     //ドラッグ開始位置
     //ドラッグ対象Rectangle(UIElement)の掴んだ場所を記憶
     private Point _dragOffset;
-
-    //ドラッグ中のRectangle
-    // MouseDown(DargStart)で設定、MouseUp(DragEnd)でnullになる。
-    //private Rectangle? _dragRectangle;
 
     /// <summary>
     /// SelectedItem 依存関係プロパティ
@@ -118,7 +114,7 @@ public class MyCanvas : Canvas
             // Itemsプロパティに変更通知を登録
             mycanvas.Items.CollectionChanged += mycanvas.Items_CollectionChanged;
 
-            //Itemsに初期登録されているデータをCanvasに初期登録する
+            //Itemsに初期登録されているデータをCanvasにも初期登録する
             if (e.NewValue is IEnumerable<RectInfo> rectInfos)
             {
                 foreach (var info in rectInfos)
