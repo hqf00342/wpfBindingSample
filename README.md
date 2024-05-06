@@ -1,20 +1,18 @@
 ﻿# wpf ドラッグ移動サンプル
 
-MVVM Bindingサンプル。
+MVVM Bindingサンプル。  
+モデルデータとUI（Datagrid, Canvas, ListBox)を連動させます。
 
 - WPF / .NET 6.0 
-- MVVMライブラリ未利用。MvvmUtilsフォルダに単純なものを用意。
-- `RectInfo`というデータクラスでRectangleを管理
-- Canvas上のUIElementをドラッグ移動させるとDataGridに反映。
-- 逆方向も反映
-
-
+- CommunityToolkit.Mvvmを利用(v1.3以降)。
 
 ![sample](img/a.gif) 
 
-## 更新
+UI上でデータを変更するとMyDataクラスにあるデータが変更されます。
+それが別のUIにも反映されます。
 
-サンプルなのでよりより平易になるように変更しています。
+
+## 更新
 
 ### ver 1.3
 
@@ -25,7 +23,6 @@ MVVM Bindingサンプル。
 - MyCanvasをUserControlではなくCanvas派生に変更
 - モデル、ViewModelをフォルダに移動
 - ListBoxの選択状態表示をCanvasに合わせるようXAML調整
-
 
 ### ver 1.1（公開時）
 
