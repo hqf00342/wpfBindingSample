@@ -1,26 +1,23 @@
-﻿using MvvmUtils;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace wpfBindingSample.Models;
 
 /// <summary>
 /// Datagridに表示する情報
 /// </summary>
-public class RectInfo : BindableBase
+public partial class RectInfo : ObservableObject
 {
-    //名前
+    //名前 : Name プロパティ
+    [ObservableProperty]
     private string _name = string.Empty;
 
-    public string Name { get => _name; set => SetProperty(ref _name, value); }
-
-    //X座標
+    //X座標 : X プロパティ
+    [ObservableProperty]
     private int _x;
 
-    public int X { get => _x; set => SetProperty(ref _x, value); }
-
-    //Y座標
+    //Y座標 : Y プロパティ
+    [ObservableProperty]
     private int _y;
-
-    public int Y { get => _y; set => SetProperty(ref _y, value); }
 
     public RectInfo(string name, int x, int y)
     {

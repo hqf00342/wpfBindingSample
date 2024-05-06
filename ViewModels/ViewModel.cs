@@ -1,4 +1,5 @@
-﻿using MvvmUtils;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using wpfBindingSample.Models;
 
@@ -7,24 +8,19 @@ namespace wpfBindingSample.ViewModels;
 /// <summary>
 /// MainWindow用ViewModel
 /// </summary>
-public class ViewModel : BindableBase
+public partial class ViewModel : ObservableObject
 {
     /// <summary>
     /// Rectangleコレクション
-    /// MyData.RectInfosを参照する。
-    /// コンストラクタで設定
     /// </summary>
+    [ObservableProperty]
     private ObservableCollection<RectInfo> _rectInfoCollection = null!;
-
-    public ObservableCollection<RectInfo> RectInfoCollection { get => _rectInfoCollection; set => SetProperty(ref _rectInfoCollection, value); }
 
     /// <summary>
     /// アイテム削除コマンド
-    /// MyData.DeleteItem()を実行する
     /// </summary>
-    private DelegateCommand? _delCmd;
-
-    public DelegateCommand DeleteItemCommand => _delCmd ??= new(o => { if (o is RectInfo item) MyData.DeleteItem(item); });
+    [RelayCommand]
+    private void DeleteItem(RectInfo rinfo) => MyData.DeleteItem(rinfo);
 
     public ViewModel()
     {

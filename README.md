@@ -16,7 +16,9 @@ MVVM Bindingサンプル。
 
 サンプルなのでよりより平易になるように変更しています。
 
+### ver 1.3
 
+- CommunityToolkit.Mvvmを適用
 
 ### ver 1.2
 
