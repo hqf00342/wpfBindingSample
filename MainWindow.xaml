@@ -4,10 +4,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:wpfBindingSample"
+        xmlns:vm="clr-namespace:wpfBindingSample.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="770">
     <Window.DataContext>
-        <local:ViewModel />
+        <vm:ViewModel />
     </Window.DataContext>
 
     <Grid>
@@ -22,7 +23,7 @@
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
 
-        <!--DataGrid。見た目調整のため長くなっている-->
+        <!--Grid0: DataGrid。見た目調整のため長くなっている-->
         <DataGrid Name="datagrid"
               ItemsSource="{Binding RectInfoCollection}"
               Background="White"
@@ -40,11 +41,12 @@
               CanUserResizeColumns="True">
 
             <DataGrid.Columns>
+                <!-- Bindingとカラム名を設定 -->
                 <DataGridTextColumn Header="Name" MinWidth="50" Binding="{Binding Name}" />
                 <DataGridTextColumn Header="X" Binding="{Binding X}" />
                 <DataGridTextColumn Header="Y" Binding="{Binding Y}" />
 
-                <!--削除ボタン-->
+                <!-- 削除ボタンを配置 -->
                 <DataGridTemplateColumn Header="操作" DisplayIndex="3">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -55,14 +57,15 @@
             </DataGrid.Columns>
         </DataGrid>
 
+        <!--Grid1: 縦スプリッター -->
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" />
 
-        <!--CanvasにItemsとSelectedItem機能を付与したMyCanvas-->
+        <!--Grid2: CanvasにItemsとSelectedItem機能を付与したMyCanvas-->
         <local:MyCanvas Grid.Column="2"
                         Items="{Binding RectInfoCollection}"
                         SelectedItem="{Binding ElementName=datagrid,Path=SelectedItem, Mode=TwoWay}" />
 
-        <!--ListBoxにCanvasを貼り付け-->
+        <!--Grid3: CanvasベースのListBox -->
         <ListBox Grid.Column="3" 
                  x:Name="listbox"
                  Background="#ffeeee"
@@ -70,7 +73,7 @@
                  SelectedItem="{Binding ElementName=datagrid,Path=SelectedItem, Mode=TwoWay}"
                  MouseMove="Rect_mouseMove" 
                  MouseUp="Rect_mouseUp">
-            
+
             <!--ベースをCanvasに変更-->
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -78,18 +81,27 @@
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
 
-            <!--表示する子アイテムをRectangleに変更-->
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Rectangle Fill="Blue" Width="20" Height="20" MouseDown="Rect_mouseDown" MouseMove="Rect_mouseMove" MouseUp="Rect_mouseUp"/>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-            
             <!--RectangleとデータのBinding設定-->
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
+                    <!-- XY座標をバインディングさせる -->
                     <Setter Property="Canvas.Left" Value="{Binding X}"/>
                     <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                    <!-- 標準のListboxが持つ選択枠表示を消すためにテンプレートをクリア -->
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Rectangle x:Name="r" Fill="Blue" Width="20" Height="20" MouseDown="Rect_mouseDown" MouseMove="Rect_mouseMove" MouseUp="Rect_mouseUp"/>
+                                <!--<ContentPresenter/>-->
+                                <ControlTemplate.Triggers>
+                                    <!-- 選択時に赤く -->
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="r" Property="Fill" Value="Red"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>

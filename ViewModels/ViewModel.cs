@@ -2,11 +2,10 @@
 using System.Collections.ObjectModel;
 using wpfBindingSample.Models;
 
-namespace wpfBindingSample;
+namespace wpfBindingSample.ViewModels;
 
 /// <summary>
-/// MainWindow用Viewモデル。
-/// モデルのデータはシングルトンのMyDataを参照している。
+/// MainWindow用ViewModel
 /// </summary>
 public class ViewModel : BindableBase
 {

@@ -16,12 +16,16 @@ MVVM Bindingサンプル。
 
 サンプルなのでよりより平易になるように変更しています。
 
+
+
 ### ver 1.2
 
 - MyCanvasをUserControlではなくCanvas派生に変更
-- モデルクラスをModels/ フォルダに移動
+- モデル、ViewModelをフォルダに移動
+- ListBoxの選択状態表示をCanvasに合わせるようXAML調整
 
-### ver 1.1
+
+### ver 1.1（公開時）
 
 - フォルダをやめて平坦に。
 - 削除ボタンをコマンド化。
